@@ -1,66 +1,91 @@
+import { useState } from 'react'
+
+const Display = (props) => {
+  console.log(props.value)
+  return(
+  <div>
+    {props.options} {props.value}
+  </div>
+  )
+} 
+
+
+
+  
 
 const Header = (props) => {
-  return (
-    <div>
-      <h1>{props.course}</h1>
-    </div>
+  console.log(props)
+  return(
+  <h1>{props.heading}</h1>
   )
 }
 
-const Part= (props) => {
-  return (
-    <div>
-      <p>{props.name}: {props.exercises}</p>
-    </div>
-  )
-}
+const Button = (props) => (
+  <button onClick={props.handleClick}>
+    {props.text}
+  </button>
+)
 
-const Total = (props) => {
-  let total = 0;
-  props.parts.forEach(part => {total = total + part.exercises})
-  return (
-    <div>
-      <p>Number of exercises: {total}</p>
-    </div>
-  )
-}
-
-const Content = (props) => {
-  return (
-    <div>
-      <Part name={props.parts[0].name} exercises={props.parts[0].exercises}/>
-      <Part name={props.parts[1].name} exercises={props.parts[1].exercises}/>
-      <Part name={props.parts[2].name} exercises={props.parts[2].exercises}/>
-    </div>
-  )
-}
-
-const App = () => {
-  const course = {
-    name: 'Half Stack application development',
-    parts: [
-      {
-        name: 'Fundamentals of React',
-        exercises: 10
-      },
-      {
-        name: 'Using props to pass data',
-        exercises: 7
-      },
-      {
-        name: 'State of a component',
-        exercises: 14
-      }
-    ]
+const Statistics = ({clicks}) => {
+  const total = clicks.good + clicks.neutral + clicks.bad
+  if (total === 0) {
+    return (
+      <div>
+        No feedback given
+      </div>
+    )
   }
 
-  return (
+  return(
+    <>
+    <Display options="Good" value={clicks.good} />
+    <Display options= "Neutral" value = {clicks.neutral}/>
+    <Display options= "Bad" value = {clicks.bad}/>
+    <Display options = "All" value = {total}/>
+    <Display options = "Average" value = {(clicks.good*1 + clicks.bad*-1)/total}/>
+    <Display options = "Positive" value = {clicks.good* (100/total)}/>
+
+    </>
+
+  )
+
+  }
+
+const App = () => {
+  const [good, setGood] = useState(0)
+  const [neutral, setNeutral] = useState(0)
+  const [bad, setBad] = useState(0)
+  const heading1 = "Give Feedback"
+  const [clicks, setClicks] = useState({good:0 , neutral:0 , bad: 0})
+  const [total, setTotal] = useState(0)
+  const [average, setAverage] = useState(0)
+
+
+  const handleGoodClick = () =>
+    setClicks({...clicks, good: clicks.good + 1})
+
+  const handleNeutralClick = () =>
+    setClicks({...clicks, neutral: clicks.neutral + 1})
+
+  const handleBadClick = () =>
+    setClicks({...clicks, bad: clicks.bad + 1})
+
+
+
+  return(
     <div>
-      <Header course={course.name}/>
-      <Content parts={course.parts}/>
-      <Total parts={course.parts} />
+      
+      <Header heading={heading1}/>
+      
+      <Button handleClick = {handleGoodClick} text= "Good"/>
+      <Button handleClick = {handleNeutralClick} text = "Neutral"/>
+      <Button handleClick = {handleBadClick} text = "Bad"/>
+      <Header heading="Statistics" />
+      <Statistics clicks= {clicks}/>
     </div>
   )
-}
+
+  }
+
 
 export default App
